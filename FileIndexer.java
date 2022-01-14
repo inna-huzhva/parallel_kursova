@@ -46,16 +46,12 @@ public class FileIndexer {
   public static void main(String[] args) throws Exception {
     List<String> stopWordsList = Files.readAllLines(Paths.get("stopWords.txt"), StandardCharsets.UTF_8);
     Set<String> stopWords = new HashSet<>(stopWordsList);
-    
-    String[] fileNames = {"test/file1.txt", "test/file2.txt", "test/file3.txt"};
+
+    File folder = new File(args[0]);
+    List<File> files = Arrays.asList(folder.listFiles());
+    String[] fileNames = files.stream().map(f -> f.toString()).toArray(String[]::new);
+
     Map<String, Set<WordEntry>> index = buildIndex(fileNames, stopWords);
     printIndex(index);
   }
 }
-
-
-
-
-
-
-
