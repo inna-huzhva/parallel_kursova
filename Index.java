@@ -1,19 +1,17 @@
+import java.util.concurrent.*;
 import java.util.*;
 
 public class Index {
-  private Map<String, Set<WordEntry>> index = new HashMap<>();
+  private ConcurrentHashMap<String, Set<WordEntry>> index = new ConcurrentHashMap<>();
 
   public void update(String fileName, Map<String, Integer> words) {
     words.forEach((w, c) -> {
       WordEntry e = new WordEntry(fileName, c);
-      if (!index.containsKey(w)) {
-        Set<WordEntry> es = new HashSet<>();
+      index.computeIfAbsent(w, k -> new HashSet<>());
+      index.computeIfPresent(w, (k, es) -> {
         es.add(e);
-        index.put(w, es);
-      } else {
-        Set<WordEntry> es = index.get(w);
-        es.add(e);
-      }
+        return es;
+      });
     });
   }
 

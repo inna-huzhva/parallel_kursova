@@ -15,11 +15,16 @@ public class Main {
     int filesCount = fileNames.length;
 
     int numberOfThreads = Integer.parseInt(args[1]);
+    FileIndexer[] workers = new FileIndexer[numberOfThreads];
     for (int i = 0; i < numberOfThreads; i++) {
       int startIndex = filesCount / numberOfThreads * i;
       int endIndex = i == (numberOfThreads - 1) ? filesCount : filesCount / numberOfThreads * (i + 1);
       String[] partOfFileNames = Arrays.copyOfRange(fileNames, startIndex, endIndex);
-      FileIndexer.buildIndex(index, partOfFileNames, stopWords);
+      workers[i] = new FileIndexer(index, partOfFileNames, stopWords);
+      workers[i].start();
+    }
+    for (int i = 0; i < numberOfThreads; i++) {
+      workers[i].join();
     }
     index.print();
   }
