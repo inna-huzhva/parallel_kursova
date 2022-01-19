@@ -5,7 +5,7 @@ import java.io.*;
 
 public class Main {
   public static void main(String[] args) throws Exception {
-    Map<String, Set<WordEntry>> index = new HashMap<>();
+    Index index = new Index();
     List<String> stopWordsList = Files.readAllLines(Paths.get("stopWords.txt"), StandardCharsets.UTF_8);
     Set<String> stopWords = new HashSet<>(stopWordsList);
 
@@ -21,15 +21,6 @@ public class Main {
       String[] partOfFileNames = Arrays.copyOfRange(fileNames, startIndex, endIndex);
       FileIndexer.buildIndex(index, partOfFileNames, stopWords);
     }
-    printIndex(index);
-  }
-
-  public static void printIndex(Map<String, Set<WordEntry>> index) {
-    index.forEach((w, es) -> {
-      System.out.println(w + ":");
-      es.stream()
-        .sorted((x, y) -> y.getFrequency() - x.getFrequency()) // function for comparison
-        .forEach(e -> System.out.println("  " + e));
-    });
+    index.print();
   }
 }
