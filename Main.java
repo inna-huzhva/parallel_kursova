@@ -26,6 +26,28 @@ public class Main {
     for (int i = 0; i < numberOfThreads; i++) {
       workers[i].join();
     }
-    index.print();
+    check(index, "dog");
+    check(index, "SNAKE");
+    check(index, "cat");
+    check(index, "car");
+    check(index, "Monkey");
+    check(index, "mOnEy");
+    check(index, "mice");
+    check(index, "snail");
+    System.out.println();
+    checkAnd(index, "dog", "snake");
+    checkAnd(index, "dog", "car");
+    checkAnd(index, "mice", "snail");
+    checkAnd(index, "dog", "cat");
+    checkAnd(index, "Monkey", "mOnEy");
+    //index.print();
+  }
+
+  private static void check(Index index, String word) {
+    System.out.println(word + ": " + index.search(word));
+  }
+
+  private static void checkAnd(Index index, String word1, String word2) {
+    System.out.println(word1 + " AND " + word2 + ": " + index.searchAnd(word1, word2));
   }
 }
