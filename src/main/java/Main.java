@@ -2,6 +2,7 @@ import java.util.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.io.*;
+import static spark.Spark.*;
 
 public class Main {
   public static void main(String[] args) throws Exception {
@@ -26,21 +27,31 @@ public class Main {
     for (int i = 0; i < numberOfThreads; i++) {
       workers[i].join();
     }
-    check(index, "dog");
-    check(index, "SNAKE");
-    check(index, "cat");
-    check(index, "car");
-    check(index, "Monkey");
-    check(index, "mOnEy");
-    check(index, "mice");
-    check(index, "snail");
-    System.out.println();
-    checkAnd(index, "dog", "snake");
-    checkAnd(index, "dog", "car");
-    checkAnd(index, "mice", "snail");
-    checkAnd(index, "dog", "cat");
-    checkAnd(index, "Monkey", "mOnEy");
-    //index.print();
+    
+    get("/search/:word", (req, res) -> {
+      String word = req.params(":word");
+      return index.search(word);
+    });
+    get("/search/:word1/and/:word2", (req, res) -> {
+      String word1 = req.params(":word1");
+      String word2 = req.params(":word2");
+      return index.searchAnd(word1, word2);
+    });
+    // check(index, "dog");
+    // check(index, "SNAKE");
+    // check(index, "cat");
+    // check(index, "car");
+    // check(index, "Monkey");
+    // check(index, "mOnEy");
+    // check(index, "mice");
+    // check(index, "snail");
+    // System.out.println();
+    // checkAnd(index, "dog", "snake");
+    // checkAnd(index, "dog", "car");
+    // checkAnd(index, "mice", "snail");
+    // checkAnd(index, "dog", "cat");
+    // checkAnd(index, "Monkey", "mOnEy");
+    // index.print();
   }
 
   private static void check(Index index, String word) {
