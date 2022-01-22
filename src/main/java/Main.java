@@ -7,16 +7,20 @@ import com.google.gson.Gson;
 
 public class Main {
   public static void main(String[] args) throws Exception {
-    Index index = new Index();
     List<String> stopWordsList = Files.readAllLines(Paths.get("stopWords.txt"), StandardCharsets.UTF_8);
     Set<String> stopWords = new HashSet<>(stopWordsList);
 
-    File folder = new File(args[0]);
+    Index index = new Index();
+    loadIndex(index, args[0], stopWords, Integer.parseInt(args[1]));
+    startApi(index);
+  }
+
+  public static void loadIndex(Index index, String directory, Set<String> stopWords, int numberOfThreads) throws Exception {
+    File folder = new File(directory);
     List<File> files = Arrays.asList(folder.listFiles());
     String[] fileNames = files.stream().map(f -> f.toString()).toArray(String[]::new);
     int filesCount = fileNames.length;
 
-    int numberOfThreads = Integer.parseInt(args[1]);
     FileIndexer[] workers = new FileIndexer[numberOfThreads];
     for (int i = 0; i < numberOfThreads; i++) {
       int startIndex = filesCount / numberOfThreads * i;
@@ -28,7 +32,9 @@ public class Main {
     for (int i = 0; i < numberOfThreads; i++) {
       workers[i].join();
     }
-    
+  }
+
+  public static void startApi(Index index) {
     threadPool(8);
     Gson gson = new Gson();
     get("/search/:word", (req, res) -> {
@@ -40,28 +46,5 @@ public class Main {
       String word2 = req.params(":word2");
       return gson.toJson(index.searchAnd(word1, word2));
     });
-    // check(index, "dog");
-    // check(index, "SNAKE");
-    // check(index, "cat");
-    // check(index, "car");
-    // check(index, "Monkey");
-    // check(index, "mOnEy");
-    // check(index, "mice");
-    // check(index, "snail");
-    // System.out.println();
-    // checkAnd(index, "dog", "snake");
-    // checkAnd(index, "dog", "car");
-    // checkAnd(index, "mice", "snail");
-    // checkAnd(index, "dog", "cat");
-    // checkAnd(index, "Monkey", "mOnEy");
-    // index.print();
-  }
-
-  private static void check(Index index, String word) {
-    System.out.println(word + ": " + index.search(word));
-  }
-
-  private static void checkAnd(Index index, String word1, String word2) {
-    System.out.println(word1 + " AND " + word2 + ": " + index.searchAnd(word1, word2));
   }
 }
