@@ -3,6 +3,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.io.*;
 import static spark.Spark.*;
+import com.google.gson.Gson;
 
 public class Main {
   public static void main(String[] args) throws Exception {
@@ -28,14 +29,16 @@ public class Main {
       workers[i].join();
     }
     
+    threadPool(8);
+    Gson gson = new Gson();
     get("/search/:word", (req, res) -> {
       String word = req.params(":word");
-      return index.search(word);
+      return gson.toJson(index.search(word));
     });
     get("/search/:word1/and/:word2", (req, res) -> {
       String word1 = req.params(":word1");
       String word2 = req.params(":word2");
-      return index.searchAnd(word1, word2);
+      return gson.toJson(index.searchAnd(word1, word2));
     });
     // check(index, "dog");
     // check(index, "SNAKE");
