@@ -1,3 +1,5 @@
+import java.util.Objects;
+
 public class WordEntry {
   private String fileName;
   private int frequency;
@@ -25,6 +27,11 @@ public class WordEntry {
     }
     WordEntry other = (WordEntry) obj;
     return other.fileName.equals(this.fileName) && other.frequency == this.frequency;
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(fileName, frequency);
   }
 
   @Override
